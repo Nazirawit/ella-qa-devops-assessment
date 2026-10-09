@@ -3,9 +3,6 @@
 **Module:** Users  
 **Version:** 1.0.0  
 **Test Type:** Functional, Negative, Boundary & Security Testing  
-**Author:** Senior QA Engineer  
-**Status:** Executed & Documented  
-
 ---
 
 ## 1. Acceptance Criteria (Derived Requirements)
@@ -30,10 +27,10 @@
 
 | Test ID | Test Case Title | Endpoint & Method | Test Data / Payload | Expected Result | Actual Result | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **TC-USR-01** | Create user with valid name and unique email | `POST /users` | `{"name": "Alice Smith", "email": "alice.smith@example.com"}` | HTTP 201; JSON body contains assigned `id > 0`, `name`, `email`, `createdAt`, `updatedAt`, `transactions: []`. | Returned HTTP 201 with saved user. | **PASS** |
+| **TC-USR-01** | Create user with valid name and unique email | `POST /users` | `{"name": "Abebe chala", "email": "Abebe.chala@example.com"}` | HTTP 201; JSON body contains assigned `id > 0`, `name`, `email`, `createdAt`, `updatedAt`, `transactions: []`. | Returned HTTP 201 with saved user. | **PASS** |
 | **TC-USR-02** | Retrieve all users list | `GET /users` | None | HTTP 200; Array of users containing relational transactions. | Returned HTTP 200 with user list. | **PASS** |
 | **TC-USR-03** | Retrieve existing user by valid ID | `GET /users/{id}` | Path param: Valid existing user ID (e.g. `1`) | HTTP 200; User object with matching ID and relational transactions. | Returned HTTP 200 with user data. | **PASS** |
-| **TC-USR-04** | Update existing user name and email | `PUT /users/{id}` | Path param: Valid ID<br>`{"name": "Alice Cooper", "email": "alice.cooper@example.com"}` | HTTP 200; Updated fields persisted and reflected in response. | Returned HTTP 200 with updated fields. | **PASS** |
+| **TC-USR-04** | Update existing user name and email | `PUT /users/{id}` | Path param: Valid ID<br>`{"name": "Abebe Cooper", "email": "Abebe.cooper@example.com"}` | HTTP 200; Updated fields persisted and reflected in response. | Returned HTTP 200 with updated fields. | **PASS** |
 
 ---
 
@@ -41,14 +38,14 @@
 
 | Test ID | Test Case Title | Endpoint & Method | Test Data / Payload | Expected Result | Actual Result | Status / Bug |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **TC-USR-05** | Create user with duplicate email | `POST /users` | Existing email: `{"name": "Copycat", "email": "alice.smith@example.com"}` | HTTP 409 Conflict; message: `"Email already exists"`. | **HTTP 201 Created** returned with dummy `id: 0`. | **FAIL (BUG-03)** |
-| **TC-USR-06** | Create user with invalid email format (missing @ and domain) | `POST /users` | `{"name": "John", "email": "not-an-email"}` | HTTP 400 Bad Request; message indicates email format error. | **HTTP 201 Created**; invalid string saved to database. | **FAIL (BUG-04)** |
+| **TC-USR-05** | Create user with duplicate email | `POST /users` | Existing email: `{"name": "Abebe", "email": "Abebe.chala@example.com"}` | HTTP 409 Conflict; message: `"Email already exists"`. | **HTTP 201 Created** returned with dummy `id: 0`. | **FAIL (BUG-03)** |
+| **TC-USR-06** | Create user with invalid email format (missing @ and domain) | `POST /users` | `{"name": "Nazrawit", "email": "not-an-email"}` | HTTP 400 Bad Request; message indicates email format error. | **HTTP 201 Created**; invalid string saved to database. | **FAIL (BUG-04)** |
 | **TC-USR-07** | Create user with missing required field `name` | `POST /users` | `{"email": "valid@example.com"}` | HTTP 400 Bad Request; message: `"Name is required"`. | HTTP 400 Bad Request returned. | **PASS** |
-| **TC-USR-08** | Create user with missing required field `email` | `POST /users` | `{"name": "John Doe"}` | HTTP 400 Bad Request; message: `"Email is required"`. | HTTP 400 Bad Request returned. | **PASS** |
+| **TC-USR-08** | Create user with missing required field `email` | `POST /users` | `{"name": "nazrawit Kebeda"}` | HTTP 400 Bad Request; message: `"Email is required"`. | HTTP 400 Bad Request returned. | **PASS** |
 | **TC-USR-09** | Create user with completely empty body | `POST /users` | `{}` | HTTP 400 Bad Request with validation errors for both fields. | HTTP 400 Bad Request returned. | **PASS** |
 | **TC-USR-10** | Retrieve user with non-existent numeric ID | `GET /users/999999` | Path param: `999999` | HTTP 404 Not Found; message: `"User with ID 999999 not found"`. | HTTP 404 Not Found returned. | **PASS** |
 | **TC-USR-11** | Retrieve user with non-numeric ID parameter | `GET /users/abc` | Path param: `abc` | HTTP 400 Bad Request (`ParseIntPipe` numeric validation). | **HTTP 500 Internal Server Error** due to unhandled `NaN` query error. | **FAIL (BUG-06)** |
-| **TC-USR-12** | Update non-existent user ID | `PUT /users/999999` | Path param: `999999`<br>`{"name": "Ghost", "email": "ghost@example.com"}` | HTTP 404 Not Found; message: `"User with ID 999999 not found"`. | HTTP 404 Not Found returned. | **PASS** |
+| **TC-USR-12** | Update non-existent user ID | `PUT /users/999999` | Path param: `999999`<br>`{"name": "kebeda", "email": "kebeda@example.com"}` | HTTP 404 Not Found; message: `"User with ID 999999 not found"`. | HTTP 404 Not Found returned. | **PASS** |
 | **TC-USR-13** | Update user email to another existing user's email | `PUT /users/{id}` | Payload with email matching another user | HTTP 409 Conflict; message: `"Email already exists"`. | HTTP 409 Conflict returned. | **PASS** |
 
 ---

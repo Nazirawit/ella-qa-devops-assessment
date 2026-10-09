@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a918b9ec-b01f-4ef6-9f4a-874fa77e2026",
     "name": "Ella API — Test Suite",
-    "description": "Comprehensive QA API Collection for Ella API (Users, Products, Transactions modules). Includes Happy Paths, Edge Cases, and Bug Verification tests.",
+    "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -73,26 +73,24 @@
             },
             "url": {
               "raw": "{{baseUrl}}/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["users"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           }
         },
         {
-          "name": "TC-USR-05: Create Duplicate User (Expects 409 Conflict - Defect BUG-03)",
+          "name": "TC-USR-05: Create Duplicate User",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('BUG-03 Check: Expected 409 Conflict on duplicate email', function () {",
-                  "    // NOTE: Current buggy API returns 201 with id: 0 instead of 409",
-                  "    if (pm.response.code === 201) {",
-                  "        const json = pm.response.json();",
-                  "        pm.expect(json.data.id, 'BUG-03 reproduced: returns fake id 0').to.eql(0);",
-                  "    } else {",
-                  "        pm.response.to.have.status(409);",
-                  "    }",
+                  "pm.test('Status code is 409 Conflict', function () {",
+                  "    pm.response.to.have.status(409);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -113,25 +111,24 @@
             },
             "url": {
               "raw": "{{baseUrl}}/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["users"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           }
         },
         {
-          "name": "TC-USR-06: Create User Invalid Email Format (Defect BUG-04)",
+          "name": "TC-USR-06: Create User Invalid Email Format",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('BUG-04 Check: Expected 400 Bad Request on invalid email syntax', function () {",
-                  "    // Current API has missing @IsEmail() validation",
-                  "    if (pm.response.code === 201) {",
-                  "        console.warn('BUG-04 confirmed: Invalid email accepted!');",
-                  "    } else {",
-                  "        pm.response.to.have.status(400);",
-                  "    }",
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -152,13 +149,17 @@
             },
             "url": {
               "raw": "{{baseUrl}}/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["users"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           }
         },
         {
-          "name": "TC-USR-07: Create User Missing Name (Expects 400 Bad Request)",
+          "name": "TC-USR-07: Create User Missing Name",
           "event": [
             {
               "listen": "test",
@@ -186,8 +187,12 @@
             },
             "url": {
               "raw": "{{baseUrl}}/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["users"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           }
         },
@@ -214,8 +219,12 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["users"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           }
         },
@@ -242,13 +251,18 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/users/{{createdUserId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", "{{createdUserId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{createdUserId}}"
+              ]
             }
           }
         },
         {
-          "name": "TC-USR-10: Get User Non-Existent ID (Expects 404)",
+          "name": "TC-USR-10: Get User Non-Existent ID",
           "event": [
             {
               "listen": "test",
@@ -266,24 +280,25 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/users/999999",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", "999999"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "999999"
+              ]
             }
           }
         },
         {
-          "name": "TC-USR-11: Get User Invalid Non-Numeric ID (Defect BUG-06)",
+          "name": "TC-USR-11: Get User Invalid Non-Numeric ID",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('BUG-06 Check: Expected 400 Bad Request, currently 500', function () {",
-                  "    if (pm.response.code === 500) {",
-                  "        console.warn('BUG-06 confirmed: Non-numeric ID crashed server with 500!');",
-                  "    } else {",
-                  "        pm.response.to.have.status(400);",
-                  "    }",
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -294,8 +309,13 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/users/invalid_id",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", "invalid_id"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "invalid_id"
+              ]
             }
           }
         },
@@ -332,8 +352,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/users/{{createdUserId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", "{{createdUserId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{createdUserId}}"
+              ]
             }
           }
         }
@@ -341,4 +366,3 @@
     }
   ]
 }
-
