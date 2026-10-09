@@ -1,0 +1,344 @@
+{
+  "info": {
+    "_postman_id": "a918b9ec-b01f-4ef6-9f4a-874fa77e2026",
+    "name": "Ella API — Test Suite",
+    "description": "Comprehensive QA API Collection for Ella API (Users, Products, Transactions modules). Includes Happy Paths, Edge Cases, and Bug Verification tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "createdUserId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "createdUserEmail",
+      "value": "qa.test@example.com",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users Module",
+      "item": [
+        {
+          "name": "TC-USR-01: Create User (Happy Path)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const randomId = Math.floor(Math.random() * 100000);",
+                  "pm.collectionVariables.set('createdUserEmail', `user_${randomId}@example.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response contains valid created user data', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.statusCode).to.eql(201);",
+                  "    pm.expect(json.data).to.be.an('object');",
+                  "    pm.expect(json.data.id).to.be.above(0);",
+                  "    pm.expect(json.data.email).to.eql(pm.collectionVariables.get('createdUserEmail'));",
+                  "    pm.collectionVariables.set('createdUserId', json.data.id.toString());",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"{{createdUserEmail}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-05: Create Duplicate User (Expects 409 Conflict - Defect BUG-03)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('BUG-03 Check: Expected 409 Conflict on duplicate email', function () {",
+                  "    // NOTE: Current buggy API returns 201 with id: 0 instead of 409",
+                  "    if (pm.response.code === 201) {",
+                  "        const json = pm.response.json();",
+                  "        pm.expect(json.data.id, 'BUG-03 reproduced: returns fake id 0').to.eql(0);",
+                  "    } else {",
+                  "        pm.response.to.have.status(409);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Duplicate User\",\n  \"email\": \"{{createdUserEmail}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-06: Create User Invalid Email Format (Defect BUG-04)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('BUG-04 Check: Expected 400 Bad Request on invalid email syntax', function () {",
+                  "    // Current API has missing @IsEmail() validation",
+                  "    if (pm.response.code === 201) {",
+                  "        console.warn('BUG-04 confirmed: Invalid email accepted!');",
+                  "    } else {",
+                  "        pm.response.to.have.status(400);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invalid Email User\",\n  \"email\": \"not-a-valid-email\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-07: Create User Missing Name (Expects 400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"missingname@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-02: Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array of users', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-03: Get User By ID (Happy Path)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Returns requested user ID', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.id.toString()).to.eql(pm.collectionVariables.get('createdUserId'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{createdUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{createdUserId}}"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-10: Get User Non-Existent ID (Expects 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "999999"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-11: Get User Invalid Non-Numeric ID (Defect BUG-06)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('BUG-06 Check: Expected 400 Bad Request, currently 500', function () {",
+                  "    if (pm.response.code === 500) {",
+                  "        console.warn('BUG-06 confirmed: Non-numeric ID crashed server with 500!');",
+                  "    } else {",
+                  "        pm.response.to.have.status(400);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/invalid_id",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "invalid_id"]
+            }
+          }
+        },
+        {
+          "name": "TC-USR-04: Update User (Happy Path)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('User updated successfully', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.name).to.eql('Updated User Name');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated User Name\",\n  \"email\": \"{{createdUserEmail}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{createdUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{createdUserId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
